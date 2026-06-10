@@ -5,6 +5,7 @@ import random
 import string
 import threading
 import os
+import json
 from oauth2client.service_account import ServiceAccountCredentials
 from telebot import apihelper
 from flask import Flask
@@ -19,7 +20,18 @@ sheet = None
 try:
     print("Owner Bot: Database se connect karne ki koshish kar raha hoon...")
     scope = ["https://spreadsheets.google.com/feeds", "https://www.googleapis.com/auth/drive"]
-    creds = ServiceAccountCredentials.from_json_keyfile_name("credentials.json", scope)
+    
+    # Render compatibility: Environment Variable se credentials padhne ki koshish karein (Sabse safe)
+    env_creds = os.environ.get("GOOGLE_CREDENTIALS")
+    
+    if env_creds:
+        print("Owner Bot: Loading credentials from Environment Variable...")
+        creds_dict = json.loads(env_creds)
+        creds = ServiceAccountCredentials.from_json_keyfile_dict(creds_dict, scope)
+    else:
+        print("Owner Bot: Loading credentials from credentials.json file...")
+        creds = ServiceAccountCredentials.from_json_keyfile_name("credentials.json", scope)
+        
     client = gspread.authorize(creds)
     
     SHEET_URL = "https://docs.google.com/spreadsheets/d/16DfTvs0PIADBqELyImh4FsDH7F00r39FYuQEdlLGP0s/edit?usp=sharing"
@@ -556,11 +568,9 @@ def owner_handle_text_steps(message):
 def run_bot():
     print("Owner Bot System is booting up...")
     
-    # 1. Custom timeout configure kiya taaki slow network me early crash na ho
     apihelper.CONNECT_TIMEOUT = 30
     apihelper.READ_TIMEOUT = 30
     
-    # 2. Command list ko try-except block me safely set kar rhe hai
     try:
         print("Telegram Commands set karne ki koshish kar raha hoon...")
         owner_bot.set_my_commands([
@@ -576,10 +586,8 @@ def run_bot():
     except Exception as e:
         print(f"⚠️ Warning: Connection issue while setting commands: {e}. Bot will proceed to start polling anyway.")
     
-    # 24/7 Infinite reconnection guard loop
     while True:
         try:
-            # Adaptive polling timeout parameters
             owner_bot.polling(non_stop=True, timeout=20, long_polling_timeout=10)
         except Exception as e:
             print(f"⚠️ Polling Exception in Owner Bot: {e}. Reconnecting in 5 seconds...")
@@ -598,12 +606,10 @@ def health():
 
 # Entrypoint handler
 if __name__ == "__main__":
-    # Start bot polling in a background thread
     bot_thread = threading.Thread(target=run_bot)
     bot_thread.daemon = True
     bot_thread.start()
     
-    # Render assigns port dynamically through PORT environment variable
     port = int(os.environ.get("PORT", 8080))
     print(f"Flask Web Server started on port {port}...")
     flask_app.run(host="0.0.0.0", port=port)
