@@ -21,17 +21,51 @@ try:
     print("Owner Bot: Database se connect karne ki koshish kar raha hoon...")
     scope = ["https://spreadsheets.google.com/feeds", "https://www.googleapis.com/auth/drive"]
     
-    # Render compatibility: Environment Variable se credentials padhne ki koshish karein (Sabse safe)
-    env_creds = os.environ.get("GOOGLE_CREDENTIALS")
+    # Direct embedded credentials data jisse koi external .json read karne ki problem hi na ho
+    creds_dict = {
+        "type": "service_account",
+        "project_id": "river-sunlight-409809",
+        "private_key_id": "fa481b33844521b4bf758b6152e47d11581c46a4",
+        "private_key": (
+            "-----BEGIN PRIVATE KEY-----\n"
+            "MIIEvgIBADANBgkqhkiG9w0BAQEFAASCBKgwggSkAgEAAoIBAQDh/3xE4SxT1VN2\n"
+            "n19sTt723GGH1oDkSORWKP/pMvYJKaTLJ6f0IZoIvzAgC0Yg8w3YxmaS2BXZymwH\n"
+            "YhdGJ6Qo6OPlbckHB1rYafjh+yWJSwCu7ub8NmI5SXZOMkbO3PFir+WUUYeH92v7\n"
+            "2EDxgvMtAhFAABL7SCf8s0TSms3VgU6whDU33VQ5GYuoPkosT60wD1RVyaCrbFYe\n"
+            "c81tc3qC5sWc8Lk/C0LhWRSsp39p/HUoQ8bcndB1PwP6C270hSjWonjbk91CaG9D\n"
+            "Qz5DzixNDfhuIsfIXftAZCnW/2pu5q+VY7rAKdeYfZ8GRbIMLMt9glnOP5SvlGEJ\n"
+            "O2kSjXPZAgMBAAECggEADXrw6YZhX6BDPdmAhnw3YDPxxNmaf1NqPEnuhtVNd+sy\n"
+            "G1SSl/UrpA8sYpLtlFBPIIGoE2T8e6zPcArNrtd1OyP2GQSpB6hshqleiTMy8Fsn\n"
+            "D6gsIrnnNrnPKtekodjrtIpfqC7LReTQHfnumMFJ+kKr7vx6JV8u1GvIhIPrmGsl\n"
+            "Bqgajcs+3wG31z2adrq7yt1+uH1L9g/lAmxrOOw6UZcKmrwa8SSg/gBZTSWfgySu\n"
+            "N0qlvEFSNG5Ng1q0FHc/8nMDFWt5y289vLW5gaFqwSYfC1ysA8CuSRyLvpJIf0Sn\n"
+            "xZvwUKJdD9eSNOInSuQz8Q5BgTAkt6ZMloCNCO4dMQKBgQD3lYMFk6EOaS/x6WOQ\n"
+            "aoN8zeN36decrTTa8Zd+YlGSK/4Wa1cCli/qGuWyzQcsxFLC0cJ17eUIvcnkTAUP\n"
+            "h972X7D8iYUN4Mjf74sy8FB+D6oXqBRJxuh7zPQG4pzb86w/Lk7pS2h2Fcwcv+x4\n"
+            "LaHXdySRbHDf2UWMZSM5rI686QKBgQDpriF/rKGJ7XEQWtVoX/Q/7ixx3afWaAm/\n"
+            "5nUsG6Flgb0pxNHVSqf6pwsZBMVezV5ctMzWky657mrrZNP+DKF0eLKhrXd8iXZK\n"
+            "k4PFVEPz1Sh3yiTEIbcdN2nCy2NH11n4BM2Wu7lrYr412GdX8Q9Mcv9nFlTMghbr\n"
+            "1jEVnzzpcQKBgQC2M7uWkQyHtHVqTF3PW/OkF0j9aIQac4VgU0cv5V8ueV2mVhxU\n"
+            "dP6SBHViXmyXT2uwn/nCG+7fvfwkHKXkxhMZsVZoozPeAL0TwA/qztwNya1dd35m\n"
+            "xRE2eqBjqMXTQMJURNoh6jLYJDZwOfXmg36FONMainmO4zDBn3SK7yikcQKBgBRO\n"
+            "ZGzS1IrGzl9sdUUHqZLwoH4Yk+Am1EoPvbjigcjvWD/L8awGO8ilQWqgJoKReBS4\n"
+            "RWCUE6hmlnX0IhPehx0269bu2wZAb74VSYsZQnpq2IRoVX+RqnbofNFHmU4B4biS\n"
+            "uukbR80/ombzWHEzhDsJG7/jGUQIgf9toloVZfBKRAoGBANxUwodXP3K+bNI6SG1r\n"
+            "nHm+Z4O+XpOZ43ClG1cunZAoRvv/sJEJEVv7e6RPAjohWenEHKJD2ALwQ6UEfgqZ3\n"
+            "KM5xwQq8jzmPiJ1p+cUXTc1f2xmUHVVR7dePW7CuvOIX/9662tdvdCdd1r7+C4SA\n"
+            "AyDOk7gh940Zb8AabgCDoGNI\n"
+            "-----END PRIVATE KEY-----\n"
+        ),
+        "client_email": "telebotdata@river-sunlight-409809.iam.gserviceaccount.com",
+        "client_id": "109064782242200734225",
+        "auth_uri": "https://accounts.google.com/o/oauth2/auth",
+        "token_uri": "https://oauth2.google.com/token",
+        "auth_provider_x509_cert_url": "https://www.googleapis.com/oauth2/v1/certs",
+        "client_x509_cert_url": "https://www.googleapis.com/robot/v1/metadata/x509/telebotdata%40river-sunlight-409809.iam.gserviceaccount.com",
+        "universe_domain": "googleapis.com"
+    }
     
-    if env_creds:
-        print("Owner Bot: Loading credentials from Environment Variable...")
-        creds_dict = json.loads(env_creds)
-        creds = ServiceAccountCredentials.from_json_keyfile_dict(creds_dict, scope)
-    else:
-        print("Owner Bot: Loading credentials from credentials.json file...")
-        creds = ServiceAccountCredentials.from_json_keyfile_name("credentials.json", scope)
-        
+    creds = ServiceAccountCredentials.from_json_keyfile_dict(creds_dict, scope)
     client = gspread.authorize(creds)
     
     SHEET_URL = "https://docs.google.com/spreadsheets/d/16DfTvs0PIADBqELyImh4FsDH7F00r39FYuQEdlLGP0s/edit?usp=sharing"
